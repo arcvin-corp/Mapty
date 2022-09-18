@@ -49,6 +49,7 @@ class Cycling extends Workout {
 class App {
   #map;
   #mapE;
+  #workouts = [];
 
   constructor() {
     this._getPosition();
@@ -112,39 +113,49 @@ class App {
     const type = inputType.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
-
-    // Check if data is valid
+    const { lat, lng } = this.#mapE.latlng;
+    let workout;
+    let workoutClassName;
 
     // Create running or cyclcing object based on input
     if (type === 'running') {
       const cadence = +inputCadence.value;
+      workoutClassName = 'running-popup';
+
+      // Check if data is valid
       if (
         !areNumbers(true, distance, duration, cadence) ||
         !areNumbers(false, distance, duration, cadence)
       )
         return alert('Inputs need to be positive numbers.');
+
+      workout = new Running([lat, lng], distance, duration, cadence);
     }
 
     if (type === 'cycling') {
       const elevationGain = +inputElevation.value;
+      workoutClassName = 'cycling-popup';
+
+      // Check if data is valid
       if (
         !areNumbers(true, distance, duration) ||
         !areNumbers(false, elevationGain)
       )
         return alert('Inputs need to be positive numbers.');
+
+      workout = new Cycling([lat, lng], distance, duration, elevationGain);
     }
+
     // Add new object to workout array
+    this.#workouts.push(workout);
 
     // Render workout on map as marker
-
     // Clear input fileds
     inputDistance.value =
       inputCadence.value =
       inputElevation.value =
       inputDuration.value =
         '';
-
-    const { lat, lng } = this.#mapE.latlng;
 
     // Create a marker for the selected location on the map
     L.marker([lat, lng])
@@ -155,12 +166,14 @@ class App {
           minWidth: 100,
           autoClose: false,
           closeOnClick: false,
-          className: 'running-popup',
+          className: workoutClassName,
         })
       )
       .setPopupContent('Workout')
       .openPopup();
   }
+
+  _renderWorkout() {}
 }
 
 const app = new App();
