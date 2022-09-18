@@ -62,9 +62,9 @@ class Cycling extends Workout {
 }
 
 class App {
-  #map;
+  map;
   #mapE;
-  #workouts = [];
+  workouts = [];
 
   constructor() {
     this._getPosition();
@@ -89,15 +89,15 @@ class App {
     const { latitude, longitude } = position.coords;
 
     // Render the map on location using Leaflet
-    this.#map = L.map('map').setView([latitude, longitude], 13);
+    this.map = L.map('map').setView([latitude, longitude], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(this.#map);
+    }).addTo(this.map);
 
     // Hanlde user click on map
-    this.#map.on('click', this._showForm.bind(this));
+    this.map.on('click', this._showForm.bind(this));
   }
 
   _showForm(mapEvent) {
@@ -162,19 +162,11 @@ class App {
     }
 
     // Add new object to workout array
-    this.#workouts.push(workout);
-
-    // Render workout on map as marker
-    // Clear input fileds
-    inputDistance.value =
-      inputCadence.value =
-      inputElevation.value =
-      inputDuration.value =
-        '';
+    this.workouts.push(workout);
 
     // Create a marker for the selected location on the map
     L.marker([lat, lng])
-      .addTo(this.#map)
+      .addTo(this.map)
       .bindPopup(
         L.popup({
           maxWidth: 250,
@@ -191,6 +183,7 @@ class App {
       )
       .openPopup();
 
+    // Render workout on map as marker
     this._renderWorkout(workout);
   }
 
@@ -199,7 +192,7 @@ class App {
     this._hideForm();
 
     containerWorkouts.insertAdjacentHTML(
-      'afterend',
+      'afterbegin',
       `<li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.constructor.name} on ${
         months[workout.date.getMonth()]
@@ -232,11 +225,15 @@ class App {
       </div>
     </li>`
     );
-
-    console.log(workout.type);
   }
 
   _hideForm() {
+    // Clear input fileds
+    inputDistance.value =
+      inputCadence.value =
+      inputElevation.value =
+      inputDuration.value =
+        '';
     form.style.display = 'grid';
     form.classList.add('hidden');
   }
