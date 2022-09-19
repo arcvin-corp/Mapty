@@ -188,11 +188,8 @@ class App {
   }
 
   _renderWorkout(workout) {
-    // Hide the workout form
-    this._hideForm();
-
-    containerWorkouts.insertAdjacentHTML(
-      'afterbegin',
+    form.insertAdjacentHTML(
+      'afterend',
       `<li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.constructor.name} on ${
         months[workout.date.getMonth()]
@@ -225,6 +222,9 @@ class App {
       </div>
     </li>`
     );
+
+    // Hide the workout form
+    this._hideForm();
   }
 
   _hideForm() {
@@ -234,8 +234,9 @@ class App {
       inputElevation.value =
       inputDuration.value =
         '';
-    form.style.display = 'grid';
-    form.classList.add('hidden');
+    form.style.display = 'none';
+
+    setTimeout(() => form.classList.add('hidden'), 1000);
   }
 }
 
